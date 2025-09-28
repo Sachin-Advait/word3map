@@ -132,12 +132,12 @@ app.get("/open", (req, res) => {
 
           // Optional: fallback after 1 second to web page if app not installed
           setTimeout(() => {
-            window.location = "https://yourdomain.com/web-map?words=${encodeURIComponent(
+            window.location = "https://word3map.onrender.com/web-map?words=${encodeURIComponent(
               words
             )}";
           }, 1000);
         </script>
-        <p>If nothing happens, <a href="https://yourdomain.com/web-map?words=${encodeURIComponent(
+        <p>If nothing happens, <a href="https://word3map.onrender.com/web-map?words=${encodeURIComponent(
           words
         )}">click here</a> to open in browser.</p>
       </body>
