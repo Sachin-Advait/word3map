@@ -1,8 +1,10 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const { v4: uuidv4 } = require("uuid");
+const cors = require("cors");
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 
 // Demo storage
@@ -107,6 +109,40 @@ app.post("/notifications/:notifId/read", (req, res) => {
 
   notif.read = true;
   res.json({ message: "Notification marked as read", notif });
+});
+
+app.get("/open", (req, res) => {
+  const words = req.query.words;
+  if (!words) return res.status(400).send("Missing words parameter");
+
+  // Return HTML that tries to open the app
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <title>Open GIS Map</title>
+      </head>
+      <body>
+        <script>
+          // Attempt to open the app
+          window.location = "gismap://location?words=${encodeURIComponent(
+            words
+          )}";
+
+          // Optional: fallback after 1 second to web page if app not installed
+          setTimeout(() => {
+            window.location = "https://yourdomain.com/web-map?words=${encodeURIComponent(
+              words
+            )}";
+          }, 1000);
+        </script>
+        <p>If nothing happens, <a href="https://yourdomain.com/web-map?words=${encodeURIComponent(
+          words
+        )}">click here</a> to open in browser.</p>
+      </body>
+    </html>
+  `);
 });
 
 const PORT = 3000;
