@@ -153,11 +153,6 @@ app.get("/open", (req, res) => {
             iframe.style.display = "none";
             iframe.src = "gismap://location?words=${encodedWords}";
             document.body.appendChild(iframe);
-
-            // Fallback after 1s → web version
-            setTimeout(() => {
-              window.location.href = "https://word3map.onrender.com/web-map?words=${encodedWords}";
-            }, 1000);
           }
 
           openApp();
