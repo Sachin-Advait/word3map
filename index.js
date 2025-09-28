@@ -115,37 +115,59 @@ app.get("/open", (req, res) => {
   const words = req.query.words;
   if (!words) return res.status(400).send("Missing words parameter");
 
-  // Return HTML that tries to open the app
+  const encodedWords = encodeURIComponent(words);
+
   res.send(`
     <!DOCTYPE html>
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
         <title>Open GIS Map</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          body {
+            font-family: sans-serif;
+            text-align: center;
+            padding: 2rem;
+          }
+          a {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+          }
+        </style>
       </head>
       <body>
-        <script>
-          // Attempt to open the app
-          window.location = "gismap://location?words=${encodeURIComponent(
-            words
-          )}";
+        <h2>Opening GIS Map…</h2>
+        <p>If your app doesn’t open automatically, click below:</p>
+        <a href="gismap://location?words=${encodedWords}">Open in App</a>
 
-          // Optional: fallback after 1 second to web page if app not installed
-          setTimeout(() => {
-            window.location = "https://word3map.onrender.com/web-map?words=${encodeURIComponent(
-              words
-            )}";
-          }, 1000);
+        <script>
+          function openApp() {
+            // Try to open the app via iframe (better for WhatsApp)
+            const iframe = document.createElement("iframe");
+            iframe.style.display = "none";
+            iframe.src = "gismap://location?words=${encodedWords}";
+            document.body.appendChild(iframe);
+
+            // Fallback after 1s → web version
+            setTimeout(() => {
+              window.location.href = "https://word3map.onrender.com/web-map?words=${encodedWords}";
+            }, 1000);
+          }
+
+          openApp();
         </script>
-        <p>If nothing happens, <a href="https://word3map.onrender.com/web-map?words=${encodeURIComponent(
-          words
-        )}">click here</a> to open in browser.</p>
       </body>
     </html>
   `);
 });
 
-const PORT = 3000;
+const PORT = 4000;
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
